@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 package Inlined::Package;
-# ABSTRACT: ...
+# ABSTRACT: EXPERIMENTAL - define multiple packages in one file, and reference them in any order
 
 use Module::Runtime qw(module_notional_filename use_module);
 use Import::Into;
@@ -23,20 +23,35 @@ __END__
 
 =head1 SYNOPSIS
 
-...
+If you've ever defined multiple packages in the same file, but want to C<use>
+one package in another, you'll have discovered why it's much
+easier to simply follow best practices and define one package per file.
 
-=head1 DESCRIPTION
+However, this module will let you minimize your inode usage:
 
+    package Foo;
+    sub bar { print "this is the foo sub!\n"; }
+
+    package Bar;
+    use Inlined::Package 'Foo';     # no kaboom!
+
+    1;
+
+Simply change C<< use Foo >> to C<< use Inlined::Package 'Foo' >> and you can
+(probably) safely define and use packages in any order.
+
+This module is for demonstration purposes only, and in no way am I
+recommending you use this in any production code whatsoever.
 
 =head1 FUNCTIONS/METHODS
 
-=begin :list
+There is no public API other than the C<use> directive itself, which is passed
+the name of the module that you want to C<use> immediately.
 
-* C<foo>
+=head1 CAVEATS
 
-=end :list
-
-...
+There may be edge cases where this doesn't work right, or leads to infinite
+looping when trying to compile modules. Use at your own risk!
 
 =head1 SUPPORT
 
@@ -46,10 +61,7 @@ I am also usually active on irc, as 'ether' at C<irc.perl.org>.
 
 =head1 ACKNOWLEDGEMENTS
 
-...
-
-=head1 SEE ALSO
-
-...
+This module was inspired by a conversation witnessed on C<modules@perl.org> --
+credit for the idea goes to Linda Walsh.
 
 =cut
