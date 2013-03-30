@@ -83,6 +83,10 @@ I am also usually active on irc, as 'ether' at C<irc.perl.org>.
 =head1 ACKNOWLEDGEMENTS
 
 This module was inspired by a conversation witnessed on C<modules@perl.org> --
-credit for the idea goes to Linda Walsh.
+credit for the idea belongs to Linda Walsh.
+
+=head1 SEE ALSO
+
+L<mem>
 
 =cut
