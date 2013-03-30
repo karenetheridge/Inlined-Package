@@ -12,8 +12,7 @@ sub import
     my ($caller, $caller_file) = caller;
     my $filename = module_notional_filename($subject);
     $::INC{$filename} = $caller_file;
-    use_module($subject);
-    $subject->import::into($caller);
+    use_module($subject)->import::into($caller);
 }
 
 1;
