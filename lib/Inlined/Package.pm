@@ -3,7 +3,18 @@ use warnings;
 package Inlined::Package;
 # ABSTRACT: ...
 
+use Module::Runtime qw(module_notional_filename use_module);
+use Import::Into;
 
+sub import
+{
+    my ($self, $subject) = @_;
+    my ($caller, $caller_file) = caller;
+    my $filename = module_notional_filename($subject);
+    $::INC{$filename} = $caller_file;
+    use_module($subject);
+    $subject->import::into($caller);
+}
 
 1;
 __END__
