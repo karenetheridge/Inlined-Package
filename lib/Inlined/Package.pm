@@ -22,21 +22,23 @@ __END__
 
 =head1 SYNOPSIS
 
+    package Foo;
+    sub bar { print "this is the foo sub!\n"; }
+
+    package Bar;
+    use Foo;                        # kaboom: "Can't locate Foo.pm in @INC"
+
+    package Baz;
+    use Inlined::Package 'Foo';     # no kaboom!
+
+=head1 DESCRIPTION
+
 If you've ever defined multiple packages in the same file, but want to C<use>
 one package in another, you'll have discovered why it's much
 easier to simply follow best practices and define one package per file.
 
 However, this module will let you minimize your inode usage:
-
-    package Foo;
-    sub bar { print "this is the foo sub!\n"; }
-
-    package Bar;
-    use Inlined::Package 'Foo';     # no kaboom!
-
-    1;
-
-Simply change C<< use Foo >> to C<< use Inlined::Package 'Foo' >> and you can
+simply change C<< use Foo >> to C<< use Inlined::Package 'Foo' >> and you can
 (probably) safely define and use packages in any order.
 
 This module is for demonstration purposes only, and in no way am I
