@@ -38,6 +38,28 @@ the name of the module that you want to `use` immediately.
 There may be edge cases where this doesn't work right, or leads to infinite
 looping when trying to compile modules. Use at your own risk!
 
+Some choices of package ordering will not yield desirable results.
+For example, this won't work:
+
+    package Foo;
+    use Inlined::Package 'Bar', 'my string';
+    sub foo { return Bar::bar(); }
+
+    package Bar;
+    my $string;
+    sub import {
+        my ($self, $_str) = @_;
+        $string = $_str;
+    }
+    sub bar { return $string || 'no string' }
+
+...because when we "`use`" Bar, it hasn't actually been defined yet (it
+simply _looks_ like it has, insofar as we do not fail with a "Can't locate
+Bar.pm in @INC" error), and therefore `Bar->import` is not called.
+Since `use` is a compile-time operation, and files are parsed top-to-bottom,
+there is no way to have `Bar` already defined with a callable `import` sub
+with the ordering as it is presented here. `Bar` _must_ be defined first.
+
 # SUPPORT
 
 Bugs may be submitted through [the RT bug tracker](https://rt.cpan.org/Public/Dist/Display.html?Name=Inlined-Package)

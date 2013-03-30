@@ -52,6 +52,28 @@ the name of the module that you want to C<use> immediately.
 There may be edge cases where this doesn't work right, or leads to infinite
 looping when trying to compile modules. Use at your own risk!
 
+Some choices of package ordering will not yield desirable results.
+For example, this won't work:
+
+    package Foo;
+    use Inlined::Package 'Bar', 'my string';
+    sub foo { return Bar::bar(); }
+
+    package Bar;
+    my $string;
+    sub import {
+        my ($self, $_str) = @_;
+        $string = $_str;
+    }
+    sub bar { return $string || 'no string' }
+
+...because when we "C<use>" Bar, it hasn't actually been defined yet (it
+simply I<looks> like it has, insofar as we do not fail with a "Can't locate
+Bar.pm in @INC" error), and therefore C<< Bar->import >> is not called.
+Since C<use> is a compile-time operation, and files are parsed top-to-bottom,
+there is no way to have C<Bar> already defined with a callable C<import> sub
+with the ordering as it is presented here. C<Bar> I<must> be defined first.
+
 =head1 SUPPORT
 
 Bugs may be submitted through L<the RT bug tracker|https://rt.cpan.org/Public/Dist/Display.html?Name=Inlined-Package>
